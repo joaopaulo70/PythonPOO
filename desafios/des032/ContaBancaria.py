@@ -1,19 +1,19 @@
 from pwinput import pwinput
-import hashlib
+from hashlib import sha256
 
 class ContaBancaria:
     """
     Cria uma  conta bancária e permite fazer saques e depósitos
     """
-    def __init__(self, id, nome=None, saldo=0, chave=None):
-        self._id = int(id)
-        self._titular = nome
-        self.__saldo = saldo
-        if chave == None:
+    def __init__(self, id:int, nome:str=None, saldo:float=0, chave:str=None):
+        self._id = int(id) # protegido (#)
+        self._titular = nome # protegido (#)
+        self.__saldo = saldo # privado (-)
+        if chave is None:
             chave = self.pede_senha()
             self.__hash = chave
         else:
-            cript = hashlib.sha256(chave.encode())
+            cript = sha256(chave.encode())
             key = cript.hexdigest()
             self.__hash = key
         print(f'Conta {id} criada com sucesso. Saldo atual de R${saldo:,.2f}')
@@ -35,9 +35,12 @@ class ContaBancaria:
         else:
             return False
 
-    def pede_senha(self):
-        senha = str(pwinput(prompt='Senha: ', mask='*'))
-        senha_hash = hashlib.sha256(senha.encode())
+    def pede_senha(self) -> str:
+        while True:
+            senha = str(pwinput(prompt='Senha: ', mask='*'))
+            if len(senha) >= 6:
+                break
+        senha_hash = sha256(senha.encode())
         return senha_hash.hexdigest()
     
     def depositar(self, valor):
