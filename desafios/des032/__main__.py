@@ -1,11 +1,13 @@
 from ContaBancaria import *
-from rich import print, inspect
 
 def main():
-    cc = ContaBancaria(000, 'Marcelo', 1000)
-    cc.depositar(1000)
-
+    cc = ContaBancaria(000, 'Marcelo', 10000, 'Guanabara')
     cc.sacar(500)
+    
+    print('Tentando mudar o nome')
+    cc.nome = 'Maricota'
+    
+    print(cc)
 
 if __name__ == '__main__':
     main()

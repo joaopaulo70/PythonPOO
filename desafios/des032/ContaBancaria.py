@@ -1,4 +1,3 @@
-from pwinput import pwinput
 from hashlib import sha256
 
 class ContaBancaria:
@@ -24,20 +23,27 @@ class ContaBancaria:
         return self._titular
 
     @nome.setter
-    def nome(self, n):
+    def nome(self, novonome:str = None):
         chave = self.pede_senha()
-        if chave == self.__hash:
-            self._titular = n
+        if self.validar_senha(chave):
+            if len(novonome) >= 5:
+                self._titular = novonome
+        else:
+            print('Senha não confere. Não posso alterar o nome')
 
-    def validar_senha(self, chave):
+    def validar_senha(self, chave:str) -> bool:
         if chave == self.__hash:
             return True
         else:
             return False
+    
+    def __str__(self):
+        return f'A conta {self._id} de {self._titular} tem R${self.__saldo} de saldo.'
 
     def pede_senha(self) -> str:
+        from pwinput import pwinput
         while True:
-            senha = str(pwinput(prompt='Senha: ', mask='*'))
+            senha = str(pwinput(prompt='Senha: '))
             if len(senha) >= 6:
                 break
         senha_hash = sha256(senha.encode())
@@ -47,8 +53,8 @@ class ContaBancaria:
         self.__saldo += valor
         print(f'Depósito de R${valor:,.2f} autorizado na conta {self._id}')
 
-    def sacar(self, valor, chave=None):
-        if chave == None:
+    def sacar(self, valor:float, chave:str=None):
+        if chave is None:
             chave = self.pede_senha()
         if self.validar_senha(chave):
             if valor > self.__saldo:
